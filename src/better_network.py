@@ -106,6 +106,74 @@ class Network(object):
             a = sigmoid(np.dot(w,a)+b)
         return a
 
+    def SGD_early_stopping(
+        self,
+        training_data, 
+        epochs, 
+        mini_batch_size, 
+        eta,
+        lmbda = 0.0,
+        stop = 10,
+        accuracy_goal = 0.95,
+        evaluation_data=None,
+        monitor_evaluation_cost=False,
+        monitor_evaluation_accuracy=False,
+        monitor_training_cost=False,
+        monitor_training_accuracy=False):
+        """
+        Train the neural network with stochastic gradient descent.
+        Training_data               -> tuple (x,y) of labeled training data
+        epochs                      -> number of epochs for training
+        mini_batch_size             -> size of each batch of train data. Each epoch is completed when all the len(training_data)//mini_batches_size batches are used.
+        eta                         -> learning rate
+        lmbda                       -> regularization parameter
+        stop                        -> early stopping condition on #last-accuracies = stop
+        accuracy_goal               -> threshold for early stopping. It is a percentage, it needs conversion
+        evaluation_data             -> if passed then evaluates training against evaluationd data
+        monitor_evaluation_cost     -> compute cost on evaluation data
+        monitor_evaluation_accuracy -> compute accuracy on evaluation data
+        monitor_training_cost       -> compute cost on training data
+        monitor_training_accuracy   -> compute accuracy on training data
+        """
+        if evaluation_data: n_eval = len(evaluation_data)
+        n = len(training_data)
+        evaluation_cost, evaluation_accuracy = [], []
+        training_cost, training_accuracy =  [], []
+        # Loop on each epoch
+        for j in range(epochs):
+            # Shuffle
+            random.shuffle(training_data)
+            # Create list of mini_batches
+            mini_batches = [training_data[k:k+mini_batch_size] for k in range(0,n,mini_batch_size)]
+            # Loop on each mini batch
+            for mini_batch in mini_batches:
+                # SGD happens here 
+                self.update_mini_batch(mini_batch, eta, lmbda, len(training_data))
+            print("Epoch {} training complete".format(j+1))
+            # Monitor trainign/evaluation cost and accuracy
+            if monitor_training_cost:
+                cost = self.total_cost(training_data, lmbda)
+                training_cost.append(cost)
+                print("Cost on training data: {}".format(cost))
+            if monitor_training_accuracy:
+                accuracy = self.accuracy(training_data, convert=True)
+                training_accuracy.append(accuracy)
+                print("Accuracy on training data: {} / {}".format(accuracy, n))
+            
+            if monitor_evaluation_cost:
+                cost = self.total_cost(evaluation_data, lmbda, convert=True)
+                evaluation_cost.append(cost)
+                print("Cost on evaluation data: {}".format(cost))
+            if monitor_evaluation_accuracy:
+                accuracy = self.accuracy(evaluation_data)
+                evaluation_accuracy.append(accuracy)
+                print("Accuracy on evaluation data: {} / {}".format(accuracy, n_eval))
+            print("")
+            if (monitor_evaluation_accuracy and len(evaluation_accuracy)>=stop and all(acc >= accuracy_goal*n_eval for acc in evaluation_accuracy[-stop:])):
+                print("Early stopping after {} epochs".format(j+1))
+                return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
+        return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
+
     def SGD(
         self,
         training_data, 
@@ -124,7 +192,7 @@ class Network(object):
         epochs                      -> number of epochs for training
         mini_batch_size             -> size of each batch of train data. Each epoch is completed when all the len(training_data)//mini_batches_size batches are used.
         eta                         -> learning rate
-        lmbda                       -> regularization parameter 
+        lmbda                       -> regularization parameter
         evaluation_data             -> if passed then evaluates training against evaluationd data
         monitor_evaluation_cost     -> compute cost on evaluation data
         monitor_evaluation_accuracy -> compute accuracy on evaluation data

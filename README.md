@@ -1,7 +1,7 @@
-# Classification of handwritten digits from MNIST dataset
+# Classification of handwritten digits from the MNIST dataset
 
-This repository contains the implementation of a neural network which classifies handwritten digits from the MNIST dataset. 
-The network is implemented without any deep learning frameworks such as PyTorch, but relies only on standard numerical packages as NumPy.
+This repository contains the implementation of a neural network that classifies handwritten digits from the MNIST dataset. 
+The network is implemented without any deep learning frameworks such as PyTorch, but relies only on standard numerical packages such as NumPy.
 
 The development is inspired by Nielsen's [*Neural Networks and Deep Learning*](http://neuralnetworksanddeeplearning.com) book.
 
@@ -12,13 +12,16 @@ The goal is to develop a working neural network capable of classifying MNIST dig
 ## Structure
 
 - `src`: contains the Jupyter notebook where the network is tested and the Python scripts used to develop the neural network class
-- `data`: contains the data from MNIST dataset
+- `data`: contains the data from the MNIST dataset
 
 ## The network
 
 - Fully connected feedforward architecture (784 → ... → 10)
 - Sigmoid activations, cross-entropy (and quadratic) loss
 - Trained with mini-batch stochastic gradient descent and backpropagation
+
+## TODOs
+- Learning rate schedule
 
 ## Requirements
 
