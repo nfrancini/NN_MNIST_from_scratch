@@ -21,7 +21,13 @@ The goal is to develop a working neural network capable of classifying MNIST dig
 - Trained with mini-batch stochastic gradient descent and backpropagation
 
 ## TODOs
-- Learning rate schedule
+
+- Momentum-based SGD
+- Dropout
+
+## Achievements
+
+- 97% accuracy reached with a single hidden layer of 100 neurons: 784 -> 100 -> 10
 
 ## Requirements
 
