@@ -187,7 +187,7 @@ class Network(object):
                 eta=eta/2
                 LR_count+=1
                 LR_epoch=j
-                print("No improvement in last {} epochs, eta updated to {}\n".format(LR_range))
+                print("No improvement in last {} epochs, eta updated to {}\n".format(LR_range, eta))
                 if(LR_count==LR_countmax):
                     print("{} division reached: stop LR schedule\n".format(LR_countmax))
                     LR_schedule = False
@@ -195,7 +195,7 @@ class Network(object):
             if (monitor_evaluation_accuracy and early_stopping and len(evaluation_accuracy)>=stop and all(acc >= accuracy_goal*n_eval for acc in evaluation_accuracy[-stop:])):
                 print("Early stopping after {} epochs".format(j+1))
                 return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
-        print("Training completed, all {} epochs considered".format(epochs))
+        print("Training completed, all {} epochs considered\n".format(epochs))
         return evaluation_cost, evaluation_accuracy, training_cost, training_accuracy
 
     def update_mini_batch(self, mini_batch, eta, lmbda, n):
